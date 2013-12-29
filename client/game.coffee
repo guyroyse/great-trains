@@ -4,7 +4,7 @@ WIDTH = 48
 HEIGHT_IN_PIXELS = HEIGHT * TILE_SIZE
 WIDTH_IN_PIXELS = WIDTH * TILE_SIZE + TILE_SIZE / 2
 
-Crafty.sprite TILE_SIZE, 'terrain-tiles.png',
+Crafty.sprite TILE_SIZE, 20, 'terrain-tiles.png',
   Mountains : [0, 0]
   Hills     : [1, 0]
   Forrest   : [2, 0]
@@ -32,16 +32,29 @@ Crafty.c 'Hex',
 addHex = (type, x, y) ->
   Crafty.e('Hex, ' + type).at(x, y)
 
+randomTerrain = ->
+  _.sample ['Mountains', 'Hills', 'Forrest', 'Plains']
+
 start = ->
 
   Crafty.init WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS
   Crafty.background 'rgb(0, 200, 255)'
 
-  @Hexes.find().observe
+  found = @Hexes.find()
+
+  if found.count() is 0
+    for x in [0...WIDTH]
+      for y in [0...HEIGHT]
+        @Hexes.insert
+          type : randomTerrain()
+          x : x
+          y : y
+
+  found.observe
     added : (hex) ->
       addHex hex.type, hex.x, hex.y
 
-  @Hexes.find().forEach (hex) ->
+  found.forEach (hex) ->
     addHex hex.type, hex.x, hex.y
 
 @addEventListener 'load', ->
