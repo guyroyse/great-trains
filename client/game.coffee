@@ -4,13 +4,11 @@ WIDTH = 48
 HEIGHT_IN_PIXELS = HEIGHT * TILE_SIZE
 WIDTH_IN_PIXELS = WIDTH * TILE_SIZE + TILE_SIZE / 2
 
-tiles =
+Crafty.sprite TILE_SIZE, 'terrain-tiles.png',
   Mountains : [0, 0]
   Hills     : [1, 0]
   Forrest   : [2, 0]
   Plains    : [3, 0]
-  
-Crafty.sprite TILE_SIZE, 'terrain-tiles.png', tiles
 
 Crafty.c 'HexGrid',
 
