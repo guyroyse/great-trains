@@ -1,6 +1,4 @@
 TILE_SIZE = 16
-HEIGHT = 24
-WIDTH = 48
 HEIGHT_IN_PIXELS = HEIGHT * TILE_SIZE + 4
 WIDTH_IN_PIXELS = WIDTH * TILE_SIZE + TILE_SIZE / 2
 
@@ -10,13 +8,19 @@ Crafty.sprite TILE_SIZE, 20, 'terrain-tiles.png',
   Forrest   : [2, 0]
   Plains    : [3, 0]
 
+hexes = {}
+
 Crafty.c 'HexGrid',
 
   init : ->
-    dimensions =
+    @attr
       w : TILE_SIZE
       h : TILE_SIZE
-    @attr(dimensions)
+
+  withId : (id) ->
+    @attr
+      _id : id
+    this
 
   at: (x, y) ->
     coords =
@@ -29,11 +33,13 @@ Crafty.c 'Hex',
   init : ->
     @requires '2D, Canvas, HexGrid'
 
-addHex = (type, x, y) ->
-  Crafty.e('Hex, ' + type).at(x, y)
+addHex = (id, type, x, y) ->
+  hex = Crafty.e('Hex, ' + type).at(x, y).withId(id)
+  hexes[id] = hex
 
-randomTerrain = ->
-  _.sample ['Mountains', 'Hills', 'Forrest', 'Plains']
+removeHex = (id) ->
+  hexes[id].destroy
+  delete hexes[id]
 
 start = ->
 
@@ -45,13 +51,16 @@ start = ->
     for x in [0...WIDTH]
       for y in [0...HEIGHT]
         @Hexes.insert
-          type : randomTerrain()
+          type : @randomTerrain()
           x : x
           y : y
 
   found.observe
     added : (hex) ->
-      addHex hex.type, hex.x, hex.y
+      addHex hex._id, hex.type, hex.x, hex.y
+    removed: (hex) ->
+      removeHex hex._id
+      
 
   found.forEach (hex) ->
     addHex hex.type, hex.x, hex.y
