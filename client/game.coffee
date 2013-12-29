@@ -38,7 +38,6 @@ randomTerrain = ->
 start = ->
 
   Crafty.init WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS
-  Crafty.background 'rgb(0, 200, 255)'
 
   found = @Hexes.find()
 
